@@ -1,14 +1,11 @@
- const express = require("express");
-const { registerUser, loginUser } = require("../controllers/authController");
-
+const express = require("express");
+const { register, login } = require("../controllers/authController");  // Correctly import the controller functions
 const router = express.Router();
 
-// @route   POST /api/auth/register
-// @desc    Register a new user
-router.post("/register", registerUser);
+// Route to register a new user
+router.post("/register", register);  // register function from authController
 
-// @route   POST /api/auth/login
-// @desc    Login user & return JWT token
-router.post("/login", loginUser);
+// Route to log in a user
+router.post("/login", login);  // login function from authController
 
-module.exports = router;
+module.exports = router;  // Export the router for use in server.js

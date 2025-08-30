@@ -1,0 +1,97 @@
+/* Main App Layout */
+.app-layout {
+  display: flex;
+  min-height: 100vh;
+  background-color: #f9fafb; /* Light grey background */
+}
+
+.main-content {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.page-content {
+  flex-grow: 1;
+  padding: 24px;
+  overflow-y: auto;
+}
+
+/* Sidebar */
+.sidebar {
+  width: 250px;
+  background: #111827; /* Darker sidebar */
+  color: #d1d5db;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  padding: 24px;
+}
+
+.sidebar-logo {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #ffffff;
+  margin-bottom: 40px;
+  text-align: center;
+}
+
+.sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.sidebar-nav a {
+  color: #9ca3af;
+  text-decoration: none;
+  font-size: 1rem;
+  padding: 12px 16px;
+  border-radius: 6px;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.sidebar-nav a:hover {
+  background-color: #374151;
+  color: #ffffff;
+}
+
+.sidebar-nav a.active {
+  background-color: #4f46e5; /* Active link highlight */
+  color: #ffffff;
+  font-weight: 500;
+}
+
+/* Navbar (Header) */
+.navbar {
+  height: 70px;
+  background: #ffffff;
+  flex-shrink: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 24px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.navbar-user-info h3 {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 500;
+    color: #1f2937;
+}
+
+.logout-button {
+  background-color: #ef4444;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.2s;
+}
+
+.logout-button:hover {
+  background-color: #dc2626;
+}

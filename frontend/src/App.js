@@ -1,52 +1,46 @@
-import React from "react";
-import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
-import Home from "./pages/Home";
-import Cases from "./pages/Cases";
-import Documents from "./pages/Documents";
-import Messages from "./pages/Messages";
-import AuditLog from "./pages/AuditLog";
-import "./App.css";
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { AuthProvider } from './context/AuthContext';
+
+// Layouts and Pages
+import MainLayout from './components/layout/MainLayout';
+import PrivateRoute from './components/PrivateRoute';
+import Login from './pages/Login';
+import Register from './pages/Register';
+import Dashboard from './pages/Dashboard';
+import Cases from './pages/Cases';
+import Documents from './pages/Documents';
+import Messages from './pages/Messages';
+import AuditLog from './pages/AuditLog';
+
+// We'll create a dedicated CSS file for Auth pages
+import './pages/Auth.css'; 
 
 function App() {
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    window.location.href = "/login";
-  };
-
   return (
-    <Router>
-      <div className="app-container">
-        {/* Sidebar */}
-        <div className="sidebar">
-          <h2>PangoChain</h2>
-          <Link to="/home">Dashboard</Link>
-          <Link to="/cases">Cases</Link>
-          <Link to="/documents">Documents</Link>
-          <Link to="/messages">Messages</Link>
-          <Link to="/auditlog">Audit Log</Link>
-        </div>
+    <AuthProvider>
+      <Router>
+        <Routes>
+          {/* Public Routes */}
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
 
-        {/* Main Area */}
-        <div className="main-content">
-          {/* Topbar */}
-          <div className="topbar">
-            <span>Alice Partner (partner)</span>
-            <button onClick={handleLogout}>Logout</button>
-          </div>
-
-          {/* Page Content */}
-          <div className="content">
-            <Routes>
-              <Route path="/home" element={<Home />} />
+          {/* Private Routes */}
+          <Route element={<PrivateRoute />}>
+            <Route element={<MainLayout />}>
+              <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/cases" element={<Cases />} />
               <Route path="/documents" element={<Documents />} />
               <Route path="/messages" element={<Messages />} />
-              <Route path="/auditlog" element={<AuditLog />} />
-            </Routes>
-          </div>
-        </div>
-      </div>
-    </Router>
+              <Route path="/audit-log" element={<AuditLog />} />
+            </Route>
+          </Route>
+          
+          {/* Redirect root to dashboard if logged in, or login if not */}
+          <Route path="*" element={<Navigate to="/dashboard" />} />
+        </Routes>
+      </Router>
+    </AuthProvider>
   );
 }
 

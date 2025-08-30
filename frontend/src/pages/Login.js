@@ -1,10 +1,11 @@
-import React, { useState } from "react";
-import { loginUser } from "../api/authAPI";
-import { useNavigate } from "react-router-dom";
+import React, { useState, useContext } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
+import { AuthContext } from '../context/AuthContext';
 
-function Login() {
-  const [formData, setFormData] = useState({ email: "", password: "" });
-  const [message, setMessage] = useState("");
+const Login = () => {
+  const [formData, setFormData] = useState({ email: '', password: '' });
+  const [error, setError] = useState('');
+  const { login } = useContext(AuthContext);
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -13,43 +14,31 @@ function Login() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError('');
     try {
-      const res = await loginUser(formData);
-      localStorage.setItem("token", res.data.token);
-      localStorage.setItem("role", res.data.role);
-      localStorage.setItem("name", res.data.name);
-
-      setMessage(`Welcome ${res.data.name} (${res.data.role})`);
-      navigate("/home");
+      await login(formData.email, formData.password);
+      navigate('/dashboard');
     } catch (err) {
-      console.error("Login error:", err.response?.data || err.message);
-      setMessage(err.response?.data?.message || "Login failed");
+      setError(err.response?.data?.error || 'Login failed. Please check your credentials.');
     }
   };
 
   return (
-    <div>
-      <h2>Login</h2>
-      <form onSubmit={handleSubmit}>
-        <input
-          name="email"
-          type="email"
-          placeholder="Email"
-          onChange={handleChange}
-          required
-        /><br/>
-        <input
-          name="password"
-          type="password"
-          placeholder="Password"
-          onChange={handleChange}
-          required
-        /><br/>
-        <button type="submit">Login</button>
-      </form>
-      <p>{message}</p>
+    <div className="auth-container">
+      <div className="auth-form">
+        <h2 className="auth-title">PangoChain Login</h2>
+        <form onSubmit={handleSubmit}>
+          <input name="email" type="email" placeholder="Email" onChange={handleChange} required />
+          <input name="password" type="password" placeholder="Password" onChange={handleChange} required />
+          <button type="submit">Login</button>
+        </form>
+        {error && <p className="auth-error">{error}</p>}
+        <p className="auth-link">
+          Don't have an account? <Link to="/register">Register here</Link>
+        </p>
+      </div>
     </div>
   );
-}
+};
 
-export default Login;
+export default Login; // This is the line the error is looking for
