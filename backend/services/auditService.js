@@ -1,7 +1,13 @@
 const AuditChain = require('../models/AuditChain');
 const crypto = require('crypto');
+const CryptoService = require('./cryptoService');
+const PrivacyService = require('./privacyService');
 
 class AuditService {
+  constructor() {
+    this.cryptoService = new CryptoService();
+    this.privacyService = new PrivacyService();
+  }
   
   // Initialize the audit chain with genesis block
   static async initialize() {

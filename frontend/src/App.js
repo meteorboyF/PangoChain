@@ -9,6 +9,7 @@ import BlockchainDashboard from "./pages/BlockchainDashboard";
 import CloudinaryFeatures from "./pages/CloudinaryFeatures";
 import ScanToDocument from "./pages/ScanToDocument";
 import LegalFramework from "./pages/LegalFramework";
+import AdvancedFeatures from "./pages/AdvancedFeatures";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import "./App.css";
@@ -105,6 +106,7 @@ function App() {
               <Link to="/scan-to-doc">📱➡️📄 Scan to Doc</Link>
               <Link to="/cloudinary">☁️ Cloudinary OCR</Link>
               <Link to="/blockchain">🔗 Blockchain</Link>
+              <Link to="/advanced">⚡ Advanced Features</Link>
               <Link to="/legal-framework">⚖️ Legal Framework</Link>
               <Link to="/messages">💬 Messages</Link>
               <Link to="/auditlog">📋 Audit Log</Link>
@@ -129,6 +131,7 @@ function App() {
               <Route path="/scan-to-doc" element={<ScanToDocument />} />
               <Route path="/cloudinary" element={<CloudinaryFeatures />} />
               <Route path="/blockchain" element={<BlockchainDashboard />} />
+              <Route path="/advanced" element={<AdvancedFeatures />} />
               <Route path="/legal-framework" element={<LegalFramework />} />
               <Route path="/messages" element={<Messages />} />
               <Route path="/auditlog" element={<AuditLog />} />

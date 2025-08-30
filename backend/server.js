@@ -43,6 +43,7 @@ app.use("/api/log", logRoutes);
 app.use("/api/documents", require("./routes/blockchainDocumentRoutes")); // Blockchain-enabled documents
 app.use("/api/cloudinary", require("./routes/cloudinaryRoutes")); // Cloudinary OCR and features
 app.use("/api/scan-to-doc", require("./routes/scanToDocRoutes")); // Image to Document conversion
+app.use("/api/advanced", require("./routes/advancedFeaturesRoutes")); // Advanced blockchain features
 
 // Test routes (for development)
 if (process.env.NODE_ENV !== 'production') {
@@ -171,7 +172,7 @@ const initializeSystem = async () => {
         nodeEnv: process.env.NODE_ENV || 'development',
         timestamp: new Date(),
         action: 'PangoChain system started with blockchain integration',
-        serverPort: process.env.PORT || 5000
+        serverPort: process.env.PORT || 5001
       }
     );
     
