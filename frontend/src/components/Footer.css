@@ -1,0 +1,13 @@
+/* src/components/Footer.css */
+.footer {
+  text-align: center;
+  padding: 3rem 5%;
+  border-top: 1px solid #2a2a2a; /* Same subtle border as the navbar */
+  margin-top: 4rem; /* Give it some space from the features section */
+}
+
+.footer p {
+  margin: 0.5rem 0;
+  font-size: 0.9rem;
+  opacity: 0.6; /* Make it less prominent */
+}

@@ -1,0 +1,50 @@
+/* src/components/LogoCloud.css */
+.logo-cloud-container {
+  padding: 4rem 0; /* Vertical padding, horizontal is handled by mask */
+  text-align: center;
+}
+
+.logo-cloud-container h2 {
+  font-size: 2.5rem;
+  margin-bottom: 3rem;
+}
+
+.logo-scroller {
+  /* This creates a horizontal fade effect at the edges */
+  -webkit-mask: linear-gradient(90deg, transparent, white 20%, white 80%, transparent);
+  mask: linear-gradient(90deg, transparent, white 20%, white 80%, transparent);
+  overflow: hidden; /* This is crucial to hide the second set of logos */
+}
+
+.scroller-inner {
+  display: flex;
+  gap: 4rem; /* Space between logos */
+  width: max-content; /* Allows the container to be wider than the screen */
+  /* This is our animation */
+  animation: scroll 40s linear infinite; 
+}
+
+/* The Keyframes for the continuous scroll */
+@keyframes scroll {
+  to {
+    transform: translateX(-50%); /* We move it by half the width, which is the length of the original logos array */
+  }
+}
+
+.logo-item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.logo-item img {
+  height: 40px; /* Normalize the height of all logos */
+  max-width: 200px; /* Prevent very wide logos from taking too much space */
+  /* The grayscale effect from harvey.ai */
+  filter: grayscale(1) opacity(0.6);
+  transition: filter 0.3s ease;
+}
+
+.logo-item img:hover {
+  filter: grayscale(0) opacity(1);
+}

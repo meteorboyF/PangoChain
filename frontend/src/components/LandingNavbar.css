@@ -1,0 +1,88 @@
+/* src/components/Landing.css */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem 5%; /* More padding */
+  background-color: transparent; /* Makes it float on the background */
+  border-bottom: 1px solid #2a2a2a; /* Subtle separator */
+}
+
+.navbar-logo a {
+  color: var(--text-color);
+  text-decoration: none;
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.navbar-links {
+  list-style: none;
+  display: flex;
+  margin: 0;
+  padding: 0;
+}
+
+.navbar-links li {
+  margin: 0 20px;
+}
+
+.navbar-links a {
+  color: var(--text-color);
+  text-decoration: none;
+  font-size: 1rem;
+  transition: color 0.3s ease;
+}
+
+.navbar-links a:hover {
+  color: var(--primary-color);
+}
+
+.navbar-cta {
+  background-color: var(--primary-color);
+  color: #ffffff;
+  padding: 0.75rem 1.5rem;
+  border-radius: 5px;
+  text-decoration: none;
+  font-weight: 500;
+  transition: background-color 0.3s ease;
+}
+
+.navbar-cta:hover {
+  background-color: #008a7e; /* A slightly darker teal for hover */
+}
+
+.navbar-actions {
+  display: flex;
+  gap: 1rem; /* Add space between the buttons */
+}
+
+.navbar-cta {
+  background-color: var(--primary-color);
+  color: #ffffff;
+  padding: 0.75rem 1.5rem;
+  border-radius: 5px;
+  text-decoration: none;
+  font-weight: 500;
+  transition: background-color 0.3s ease;
+}
+
+.navbar-cta:hover {
+  background-color: #008a7e;
+}
+
+/* New style for the secondary "Client Portal" button */
+.navbar-secondary-cta {
+  background-color: transparent;
+  color: var(--text-color);
+  border: 1px solid var(--secondary-color);
+  padding: 0.75rem 1.5rem;
+  border-radius: 5px;
+  text-decoration: none;
+  font-weight: 500;
+  transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+.navbar-secondary-cta:hover {
+  background-color: var(--secondary-color);
+  border-color: var(--secondary-color);
+}

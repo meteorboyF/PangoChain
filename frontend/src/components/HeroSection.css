@@ -1,0 +1,27 @@
+/* src/components/HeroSection.css */
+.hero-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 10rem 2rem;
+  min-height: 70vh;
+}
+
+.hero-headline {
+  font-size: 3.5rem;
+  font-weight: 700;
+  max-width: 800px;
+  line-height: 1.2;
+  margin-bottom: 1.5rem;
+  color: #ffffff;
+}
+
+.hero-subheadline {
+  font-size: 1.25rem;
+  max-width: 650px;
+  color: var(--text-color);
+  opacity: 0.8;
+  line-height: 1.6;
+}

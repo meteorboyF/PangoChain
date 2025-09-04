@@ -1,34 +1,257 @@
-.cases {
-  padding: 20px;
+/*================================================
+  Styling for the Themed Case Management Page
+================================================*/
+
+:root {
+  /* Define your theme colors here */
+  --primary-color: #00A99D;
+  --text-color: #EAEAEA;
+  --background-color: #121212; /* Example dark background */
 }
 
-.kanban {
+/* --- General Page Layout --- */
+.cases-page {
+  padding: 2rem;
+  color: var(--text-color);
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.cases-header {
   display: flex;
-  gap: 20px;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2.5rem;
+  border-bottom: 2px solid var(--primary-color);
+  padding-bottom: 1rem;
 }
 
-.kanban-column {
-  flex: 1;
-  background: #f9f9f9;
-  border: 1px solid #ddd;
-  padding: 10px;
-  border-radius: 8px;
+.cases-header h1 {
+  font-size: 2.5rem;
+  margin: 0;
 }
 
-.task-card {
-  background: white;
-  padding: 10px;
-  margin: 8px 0;
+/* --- General Button Styles --- */
+.btn {
+  padding: 12px 24px;
+  border: none;
   border-radius: 6px;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+  font-weight: 700;
+  cursor: pointer;
+  font-size: 1rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.2s ease-in-out;
+  text-decoration: none;
+  white-space: nowrap;
 }
 
-.task-actions {
-  margin-top: 5px;
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
-.task-actions button {
-  margin: 2px;
-  font-size: 12px;
-  padding: 3px 6px;
+/* DEFINITIVE FIX FOR BUTTON VISIBILITY */
+.btn-primary {
+  background: var(--primary-color);
+  color: #a9c1ff; /* This color is directly from your screenshot */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+.btn-primary:hover {
+  background: #00C7B8;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(0, 199, 184, 0.4);
+}
+
+.btn-secondary {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--text-color);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+.btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: var(--primary-color);
+}
+
+/* --- Glass Card Base Style --- */
+.card-glass {
+  background: rgba(30, 30, 30, 0.6);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px); /* For Safari */
+  padding: 2rem;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+}
+
+/* --- Create Case Form --- */
+.create-case-form {
+  margin-bottom: 2.5rem;
+  animation: fadeIn 0.5s ease-out;
+}
+.create-case-form h3 {
+  margin-top: 0;
+  margin-bottom: 1.5rem;
+  font-size: 1.5rem;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 1rem; /* Reduced margin */
+}
+
+.form-group label {
+  font-weight: 600;
+  color: rgba(234, 234, 234, 0.8);
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+  padding: 12px;
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 6px;
+  font-size: 1rem;
+  color: var(--text-color);
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  border-color: var(--primary-color);
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(0, 169, 157, 0.4);
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+/* --- Cases List & Grid --- */
+.cases-list h2 {
+  font-size: 1.8rem;
+  margin-bottom: 1.5rem;
+}
+
+.cases-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 1.5rem;
+}
+
+/* --- Case Card --- */
+.case-card {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.3s ease, border-color 0.3s ease;
+}
+.case-card:hover {
+  transform: translateY(-5px);
+  border-color: var(--primary-color);
+}
+
+.case-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding-bottom: 1rem;
+  margin-bottom: 1rem;
+}
+
+.case-card-header h4 {
+  margin: 0;
+  font-size: 1.25rem;
+  color: #FFFFFF;
+  line-height: 1.4;
+}
+
+.case-status {
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  white-space: nowrap;
+  text-transform: capitalize;
+  flex-shrink: 0;
+  margin-left: 1rem;
+}
+.status-open { background-color: #29b6f6; color: #000; }
+.status-in-progress { background-color: #ffa726; color: #000; }
+.status-closed { background-color: #66bb6a; color: #000; }
+
+.case-card-body {
+  flex-grow: 1; /* Pushes footer to the bottom */
+}
+.case-card-body p {
+  margin: 0 0 0.75rem 0;
+  color: rgba(234, 234, 234, 0.7);
+  line-height: 1.6;
+}
+.case-card-body p strong {
+  color: var(--text-color);
+  font-weight: 600;
+}
+.case-card-body p.case-description {
+  /* Style for longer descriptions */
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;  
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+
+.case-card-footer {
+  margin-top: auto; /* Pushes footer to the bottom */
+  padding-top: 1rem;
+  text-align: right;
+}
+
+/* --- No Cases Message --- */
+.no-cases {
+  text-align: center;
+  padding: 4rem;
+  border: 2px dashed rgba(255, 255, 255, 0.2);
+}
+.no-cases-icon {
+  font-size: 4rem;
+  color: var(--primary-color);
+  margin-bottom: 1rem;
+}
+.no-cases h3 {
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+.no-cases p {
+  font-size: 1.2rem;
+  color: rgba(234, 234, 234, 0.7);
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+/* --- Animations --- */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }

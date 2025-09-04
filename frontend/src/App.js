@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { BrowserRouter as Router, Routes, Route, Link, Navigate } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Link, Navigate, Outlet } from "react-router-dom";
+
+// Import all your pages
 import Home from "./pages/Home";
 import Cases from "./pages/Cases";
 import Documents from "./pages/Documents";
@@ -12,15 +14,62 @@ import LegalFramework from "./pages/LegalFramework";
 import AdvancedFeatures from "./pages/AdvancedFeatures";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
+import LandingPage from "./pages/LandingPage"; // Import the new landing page wrapperimport "
 import "./App.css";
+// This is the layout for the protected part of your app
+const ProtectedLayout = ({ userInfo, onLogout }) => {
+  // If no user info, don't render anything (the ProtectedRoute will handle redirect)
+  if (!userInfo) return null;
+
+  return (
+    <div className="app-container">
+      {/* Sidebar */}
+      <div className="sidebar">
+        <h2>🔗 PangoChain</h2>
+        {(userInfo.role === 'partner' || userInfo.role === 'associate' || userInfo.role === 'junior' || userInfo.role === 'paralegal') && (
+          <>
+            <Link to="/app/home">Dashboard</Link>
+            <Link to="/app/cases">Cases</Link>
+            <Link to="/app/documents">Documents</Link>
+            <Link to="/app/scan-to-doc">Scan to Doc</Link>
+            <Link to="/app/cloudinary">Cloudinary OCR</Link>
+            <Link to="/app/blockchain">Blockchain</Link>
+            <Link to="/app/advanced">Advanced Features</Link>
+            <Link to="/app/legal-framework">Legal Framework</Link>
+            <Link to="/app/messages">Messages</Link>
+            <Link to="/app/auditlog">Audit Log</Link>
+          </>
+        )}
+      </div>
+
+      {/* Main Area */}
+      <div className="main-content">
+        <div className="topbar">
+          <span>{userInfo.name} ({userInfo.role}) - 🔗 Blockchain Enabled</span>
+          <button onClick={onLogout} style={{padding: '8px 16px', background: '#dc3545', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer'}}>Logout</button>
+        </div>
+        <div className="content">
+          <Outlet /> {/* Child routes will render here */}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// This component checks for authentication and renders the layout or redirects
+const ProtectedRoute = ({ isAuthenticated, userInfo, onLogout }) => {
+  if (!isAuthenticated) {
+    return <Navigate to="/login" replace />;
+  }
+  return <ProtectedLayout userInfo={userInfo} onLogout={onLogout} />;
+};
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [userInfo, setUserInfo] = useState({ name: '', role: '' });
+  const [userInfo, setUserInfo] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Check if user is logged in on app load
     const token = localStorage.getItem('token');
     const name = localStorage.getItem('name');
     const role = localStorage.getItem('role');
@@ -33,11 +82,9 @@ function App() {
   }, []);
 
   const handleLogout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('name');
-    localStorage.removeItem('role');
+    localStorage.clear();
     setIsAuthenticated(false);
-    setUserInfo({ name: '', role: '' });
+    setUserInfo(null);
   };
 
   const handleLogin = (token, name, role) => {
@@ -54,92 +101,36 @@ function App() {
     </div>;
   }
 
-  if (!isAuthenticated) {
-    return (
-      <Router>
-        <div className="auth-container" style={{minHeight: '100vh', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', background: '#f8f9fa'}}>
-          <div style={{background: 'white', padding: '40px', borderRadius: '12px', boxShadow: '0 4px 12px rgba(0,0,0,0.1)', minWidth: '400px'}}>
-            <h1 style={{textAlign: 'center', marginBottom: '30px', color: '#2c3e50'}}>🔗 PangoChain Legal System</h1>
-            <div style={{display: 'flex', gap: '20px', marginBottom: '30px', justifyContent: 'center'}}>
-              <Link to="/login" style={{textDecoration: 'none'}}>
-                <button 
-                  style={{padding: '12px 24px', background: '#007bff', color: 'white', border: 'none', borderRadius: '8px', fontWeight: '600', cursor: 'pointer', fontSize: '16px'}}
-                >
-                  👨‍⚖️ Lawyer Login
-                </button>
-              </Link>
-              <button 
-                style={{padding: '12px 24px', background: '#6c757d', color: 'white', border: 'none', borderRadius: '8px', fontWeight: '600', cursor: 'not-allowed', fontSize: '16px', opacity: '0.6'}}
-                disabled
-                title="Client portal coming soon"
-              >
-                👤 Client (Coming Soon)
-              </button>
-            </div>
-            <Routes>
-              <Route path="/login" element={<Login onLogin={handleLogin} />} />
-              <Route path="/register" element={<Register />} />
-              <Route path="*" element={<Navigate to="/login" replace />} />
-            </Routes>
-            <div style={{textAlign: 'center', marginTop: '20px'}}>
-              <Link to="/login" style={{color: '#007bff', textDecoration: 'none', marginRight: '20px'}}>Login</Link>
-              <Link to="/register" style={{color: '#007bff', textDecoration: 'none'}}>Register New Lawyer</Link>
-            </div>
-          </div>
-        </div>
-      </Router>
-    );
-  }
-
   return (
     <Router>
-      <div className="app-container">
-        {/* Sidebar */}
-        <div className="sidebar">
-          <h2>🔗 PangoChain</h2>
-          {/* Lawyer-only navigation */}
-          {(userInfo.role === 'partner' || userInfo.role === 'associate' || userInfo.role === 'junior' || userInfo.role === 'paralegal') && (
-            <>
-              <Link to="/home">📊 Dashboard</Link>
-              <Link to="/cases">⚖️ Cases</Link>
-              <Link to="/documents">📄 Documents</Link>
-              <Link to="/scan-to-doc">📱➡️📄 Scan to Doc</Link>
-              <Link to="/cloudinary">☁️ Cloudinary OCR</Link>
-              <Link to="/blockchain">🔗 Blockchain</Link>
-              <Link to="/advanced">⚡ Advanced Features</Link>
-              <Link to="/legal-framework">⚖️ Legal Framework</Link>
-              <Link to="/messages">💬 Messages</Link>
-              <Link to="/auditlog">📋 Audit Log</Link>
-            </>
-          )}
-        </div>
+      <Routes>
+        {/* Public Route */}
+        <Route path="/" element={<LandingPage />} />
+        
+        {/* Auth Routes */}
+        <Route path="/login" element={<Login onLogin={handleLogin} />} />
+        <Route path="/register" element={<Register />} />
+        
+        {/* Protected Routes */}
+        <Route path="/app" element={<ProtectedRoute isAuthenticated={isAuthenticated} userInfo={userInfo} onLogout={handleLogout} />}>
+          {/* These are the nested routes that will render inside ProtectedLayout's <Outlet> */}
+          <Route path="home" element={<Home />} />
+          <Route path="cases" element={<Cases />} />
+          <Route path="documents" element={<Documents />} />
+          <Route path="scan-to-doc" element={<ScanToDocument />} />
+          <Route path="cloudinary" element={<CloudinaryFeatures />} />
+          <Route path="blockchain" element={<BlockchainDashboard />} />
+          <Route path="advanced" element={<AdvancedFeatures />} />
+          <Route path="legal-framework" element={<LegalFramework />} />
+          <Route path="messages" element={<Messages />} />
+          <Route path="auditlog" element={<AuditLog />} />
+          {/* Redirect from /app to /app/home */}
+          <Route index element={<Navigate to="/app/home" replace />} />
+        </Route>
 
-        {/* Main Area */}
-        <div className="main-content">
-          {/* Topbar */}
-          <div className="topbar">
-            <span>{userInfo.name} ({userInfo.role}) - 🔗 Blockchain Enabled</span>
-            <button onClick={handleLogout} style={{padding: '8px 16px', background: '#dc3545', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer'}}>Logout</button>
-          </div>
-
-          {/* Page Content */}
-          <div className="content">
-            <Routes>
-              <Route path="/home" element={<Home />} />
-              <Route path="/cases" element={<Cases />} />
-              <Route path="/documents" element={<Documents />} />
-              <Route path="/scan-to-doc" element={<ScanToDocument />} />
-              <Route path="/cloudinary" element={<CloudinaryFeatures />} />
-              <Route path="/blockchain" element={<BlockchainDashboard />} />
-              <Route path="/advanced" element={<AdvancedFeatures />} />
-              <Route path="/legal-framework" element={<LegalFramework />} />
-              <Route path="/messages" element={<Messages />} />
-              <Route path="/auditlog" element={<AuditLog />} />
-              <Route path="*" element={<Navigate to="/home" replace />} />
-            </Routes>
-          </div>
-        </div>
-      </div>
+        {/* Catch-all route to redirect to landing page if no other route matches */}
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
     </Router>
   );
 }

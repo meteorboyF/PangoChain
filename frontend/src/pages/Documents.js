@@ -452,8 +452,7 @@ function Documents() {
                 checked={showBlockchainStatus}
                 onChange={(e) => setShowBlockchainStatus(e.target.checked)}
               />
-              Show Blockchain Status
-            </label>
+<span>Show Blockchain Status</span>            </label>
           </div>
 
           {/* Search and Filter */}

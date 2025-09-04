@@ -113,21 +113,21 @@ function AuditLog() {
   return (
     <div className="audit-log-container">
       <div className="audit-header">
-        <h2>🔗 Blockchain Audit Trail</h2>
-        <p>Immutable record of all system activities backed by cryptographic hashes</p>
+        <h2><span className="header-icon">🔗</span> Blockchain Audit Trail</h2>
+        <p>Immutable record of all system activities backed by cryptographic hashes.</p>
         
         {chainStats && (
           <div className="chain-stats">
             <div className="stat-item">
-              <span className="stat-label">Total Blocks:</span>
+              <span className="stat-label">Total Blocks</span>
               <span className="stat-value">{chainStats.totalBlocks}</span>
             </div>
             <div className="stat-item">
-              <span className="stat-label">Latest Block Height:</span>
+              <span className="stat-label">Latest Block Height</span>
               <span className="stat-value">{chainStats.latestBlockHeight}</span>
             </div>
             <div className="stat-item">
-              <span className="stat-label">Actions (30 days):</span>
+              <span className="stat-label">Actions (30 days)</span>
               <span className="stat-value">{chainStats.last30Days?.totalActions || 0}</span>
             </div>
           </div>
@@ -178,41 +178,41 @@ function AuditLog() {
               <div className="entry-header">
                 <div className="action-info">
                   <span className="action-icon">{getActionIcon(entry.actionType)}</span>
-                  <span className="action-type">{entry.actionType}</span>
+                  <span className="action-type">{entry.actionType.replace('_', ' ')}</span>
                   <span className="timestamp">{formatTimestamp(entry.timestamp)}</span>
                 </div>
                 <div className="blockchain-info">
                   <span className="block-height">Block #{entry.blockHeight}</span>
                   <span className="block-id" title={entry.blockId}>
-                    {entry.blockId?.substring(0, 16)}...
+                    ID: {entry.blockId?.substring(0, 16)}...
                   </span>
                 </div>
               </div>
               
               <div className="entry-details">
-                <div className="user-info">
+                <div className="detail-item">
                   <strong>User:</strong> {entry.user?.name || 'System'} ({entry.user?.email || 'system@pangochain.local'})
                 </div>
                 
                 {entry.details?.action && (
-                  <div className="action-description">
+                  <div className="detail-item">
                     <strong>Action:</strong> {entry.details.action}
                   </div>
                 )}
                 
                 {entry.details?.fileName && (
-                  <div className="file-info">
+                  <div className="detail-item">
                     <strong>File:</strong> {entry.details.fileName}
                   </div>
                 )}
                 
                 {entry.details?.caseId && (
-                  <div className="case-info">
+                  <div className="detail-item">
                     <strong>Case ID:</strong> {entry.details.caseId}
                   </div>
                 )}
                 
-                <div className="signature-info">
+                <div className="detail-item">
                   <strong>Digital Signature:</strong> 
                   <span className="signature" title={entry.signature}>
                     {entry.signature?.substring(0, 32)}...
@@ -256,237 +256,277 @@ function AuditLog() {
 
       <style jsx>{`
         .audit-log-container {
-          max-width: 1200px;
-          margin: 0 auto;
-          padding: 20px;
-          font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+          padding: 2rem;
+          font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+          background-color: #121212;
+          color: #EAEAEA;
+          min-height: 100vh;
         }
 
         .audit-header h2 {
-          color: #2c3e50;
-          margin-bottom: 10px;
+          font-size: 2rem;
+          font-weight: 600;
+          color: #FFFFFF;
+          margin-bottom: 0.5rem;
+          border-bottom: 2px solid #3B82F6;
+          padding-bottom: 0.5rem;
+          display: inline-block;
         }
 
         .audit-header p {
-          color: #7f8c8d;
-          margin-bottom: 20px;
+          color: #AAAAAA;
+          margin-bottom: 2rem;
+          font-size: 1.1rem;
         }
 
         .chain-stats {
           display: flex;
-          gap: 20px;
-          margin-bottom: 20px;
-          padding: 15px;
-          background: #f8f9fa;
+          gap: 1.5rem;
+          margin-bottom: 2rem;
+          padding: 1.5rem;
+          background: #1E1E1E;
           border-radius: 8px;
-          border-left: 4px solid #3498db;
+          border-left: 4px solid #10B981;
         }
 
         .stat-item {
           display: flex;
           flex-direction: column;
-          align-items: center;
         }
 
         .stat-label {
-          font-size: 12px;
-          color: #7f8c8d;
-          margin-bottom: 5px;
+          font-size: 0.9rem;
+          color: #AAAAAA;
+          margin-bottom: 0.5rem;
+          text-transform: uppercase;
         }
 
         .stat-value {
-          font-size: 18px;
+          font-size: 1.75rem;
           font-weight: bold;
-          color: #2c3e50;
+          color: #FFFFFF;
         }
 
         .audit-controls {
           display: flex;
           justify-content: space-between;
           align-items: center;
-          margin-bottom: 20px;
-          padding: 15px;
-          background: #ffffff;
+          margin-bottom: 2rem;
+          padding: 1rem;
+          background: #1E1E1E;
           border-radius: 8px;
-          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .filter-section label {
+          margin-right: 0.75rem;
+          color: #AAAAAA;
         }
 
         .filter-section select {
-          padding: 8px 12px;
-          border: 1px solid #ddd;
-          border-radius: 4px;
-          margin-left: 10px;
+          background: #252525;
+          color: #EAEAEA;
+          border: 1px solid #444;
+          border-radius: 5px;
+          padding: 0.5rem 0.75rem;
+          font-size: 1rem;
+        }
+        
+        .filter-section select:focus {
+          outline: none;
+          border-color: #3B82F6;
         }
 
         .verify-btn {
-          background: #27ae60;
+          background: #3B82F6;
           color: white;
           border: none;
-          padding: 10px 20px;
+          padding: 0.75rem 1.5rem;
           border-radius: 5px;
           cursor: pointer;
           font-weight: bold;
+          transition: background-color 0.2s ease-in-out;
         }
 
         .verify-btn:hover {
-          background: #229954;
+          background: #2563EB;
         }
 
         .verify-btn:disabled {
-          background: #bdc3c7;
+          background: #444;
+          color: #888;
           cursor: not-allowed;
         }
 
         .error-message {
-          background: #fee;
-          border: 1px solid #fcc;
-          padding: 15px;
+          background: #4C1D1D;
+          border: 1px solid #EF4444;
+          padding: 1rem;
           border-radius: 5px;
-          margin-bottom: 20px;
+          margin-bottom: 1.5rem;
           display: flex;
           align-items: center;
-          gap: 10px;
-          color: #d63031;
+          gap: 0.75rem;
+          color: #F8B4B4;
         }
 
         .audit-trail {
-          space-y: 15px;
+          display: flex;
+          flex-direction: column;
+          gap: 1rem;
         }
 
         .audit-entry {
-          background: white;
+          background: #1E1E1E;
           border-radius: 8px;
-          padding: 20px;
-          margin-bottom: 15px;
-          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-          border-left: 4px solid #3498db;
+          padding: 1.5rem;
+          border-left: 4px solid #3B82F6; /* Default color */
+          transition: transform 0.2s ease-in-out;
+        }
+        
+        .audit-entry:hover {
+            transform: translateY(-3px);
         }
 
         .audit-entry.high-severity {
-          border-left-color: #e74c3c;
-          background: #fef9f9;
+          border-left-color: #EF4444;
         }
 
         .audit-entry.medium-severity {
-          border-left-color: #f39c12;
-          background: #fefbf6;
+          border-left-color: #F59E0B;
         }
 
         .entry-header {
           display: flex;
           justify-content: space-between;
           align-items: center;
-          margin-bottom: 15px;
+          margin-bottom: 1rem;
+          padding-bottom: 1rem;
+          border-bottom: 1px solid #333;
         }
 
         .action-info {
           display: flex;
           align-items: center;
-          gap: 10px;
+          gap: 0.75rem;
         }
 
         .action-icon {
-          font-size: 20px;
+          font-size: 1.5rem;
         }
 
         .action-type {
           font-weight: bold;
-          color: #2c3e50;
+          font-size: 1.1rem;
+          color: #FFFFFF;
+          text-transform: capitalize;
         }
 
         .timestamp {
-          color: #7f8c8d;
-          font-size: 14px;
+          color: #AAAAAA;
+          font-size: 0.9rem;
         }
 
         .blockchain-info {
           display: flex;
           align-items: center;
-          gap: 10px;
-          font-size: 12px;
-          color: #7f8c8d;
+          gap: 0.75rem;
+          font-size: 0.8rem;
+          color: #AAAAAA;
         }
 
         .block-height {
-          background: #3498db;
-          color: white;
-          padding: 2px 8px;
+          background: #333;
+          color: #EAEAEA;
+          padding: 0.2rem 0.6rem;
           border-radius: 12px;
           font-weight: bold;
         }
 
         .block-id {
           font-family: monospace;
-          background: #ecf0f1;
-          padding: 2px 6px;
+          background: #333;
+          padding: 0.2rem 0.5rem;
           border-radius: 4px;
         }
 
         .entry-details {
           display: grid;
-          gap: 8px;
+          gap: 0.75rem;
+        }
+        
+        .detail-item {
+          color: #CCCCCC;
+          line-height: 1.5;
         }
 
-        .entry-details > div {
-          color: #2c3e50;
+        .detail-item strong {
+            color: #AAAAAA;
+            margin-right: 0.5rem;
         }
 
         .signature {
           font-family: monospace;
-          background: #f8f9fa;
-          padding: 2px 6px;
+          background: #252525;
+          padding: 0.1rem 0.4rem;
           border-radius: 4px;
-          color: #e74c3c;
+          color: #F59E0B;
           font-weight: bold;
         }
 
         .technical-info {
-          margin-top: 10px;
-          padding-top: 10px;
-          border-top: 1px solid #ecf0f1;
-          color: #95a5a6;
+          margin-top: 0.5rem;
+          padding-top: 0.5rem;
+          border-top: 1px solid #333;
+          color: #888888;
         }
 
         .pagination {
           display: flex;
           justify-content: center;
           align-items: center;
-          gap: 20px;
-          margin-top: 30px;
+          gap: 1.5rem;
+          margin-top: 2rem;
         }
 
         .pagination-btn {
-          background: #3498db;
+          background: #3B82F6;
           color: white;
           border: none;
-          padding: 10px 20px;
+          padding: 0.6rem 1.2rem;
           border-radius: 5px;
           cursor: pointer;
+          transition: background-color 0.2s ease-in-out;
+        }
+        
+        .pagination-btn:hover {
+            background-color: #2563EB;
         }
 
         .pagination-btn:disabled {
-          background: #bdc3c7;
+          background: #444;
+          color: #888;
           cursor: not-allowed;
         }
 
         .pagination-info {
           font-weight: bold;
-          color: #2c3e50;
+          color: #EAEAEA;
         }
 
         .loading {
           text-align: center;
-          padding: 50px;
+          padding: 5rem;
+          color: #AAAAAA;
         }
 
         .spinner {
-          border: 4px solid #f3f3f3;
-          border-top: 4px solid #3498db;
+          border: 4px solid #333;
+          border-top: 4px solid #3B82F6;
           border-radius: 50%;
           width: 40px;
           height: 40px;
           animation: spin 1s linear infinite;
-          margin: 0 auto 20px;
+          margin: 0 auto 1.5rem;
         }
 
         @keyframes spin {
@@ -496,25 +536,31 @@ function AuditLog() {
 
         .no-data {
           text-align: center;
-          padding: 50px;
-          color: #7f8c8d;
+          padding: 5rem;
+          color: #AAAAAA;
+          background: #1E1E1E;
+          border-radius: 8px;
         }
 
         @media (max-width: 768px) {
+          .audit-log-container {
+              padding: 1rem;
+          }
           .chain-stats {
             flex-direction: column;
-            gap: 10px;
+            gap: 1rem;
           }
           
           .audit-controls {
             flex-direction: column;
-            gap: 15px;
+            gap: 1rem;
+            align-items: stretch;
           }
           
           .entry-header {
             flex-direction: column;
             align-items: flex-start;
-            gap: 10px;
+            gap: 0.75rem;
           }
         }
       `}</style>

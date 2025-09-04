@@ -1,209 +1,234 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import "./Cases.css";
+import { FaFolderOpen, FaPlus } from 'react-icons/fa'; // Example of using icons
 
-function Cases() {
-  const [cases, setCases] = useState([]);
-  const [showCreateForm, setShowCreateForm] = useState(false);
+// --- Helper function for API calls ---
+const apiService = {
+  async getCases() {
+    try {
+      const response = await fetch('/api/test/cases');
+      if (!response.ok) throw new Error('Network response was not ok');
+      const data = await response.json();
+      return data.cases || [];
+    } catch (error) {
+      console.error('Error loading cases:', error);
+      return []; // Return empty array on error
+    }
+  },
+  async createCase(caseData) {
+    const response = await fetch('/api/test/cases', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(caseData),
+    });
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.error || 'Failed to create case');
+    }
+    return await response.json();
+  }
+};
+
+// --- Case Creation Form Component ---
+const CaseForm = ({ onCaseCreated, onCancel }) => {
   const [formData, setFormData] = useState({
     title: '',
     description: '',
     clientName: '',
     caseType: 'General'
   });
-  const [creating, setCreating] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const caseTypes = [
     'General', 'Contract', 'Criminal', 'Civil', 'Corporate', 
     'Family', 'Immigration', 'Real Estate', 'Intellectual Property'
   ];
 
-  useEffect(() => {
-    loadCases();
-  }, []);
-
-  const loadCases = async () => {
-    try {
-      const response = await fetch('/api/test/cases');
-      const data = await response.json();
-      setCases(data.cases || []);
-    } catch (error) {
-      console.error('Error loading cases:', error);
-    }
-  };
-
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
+    setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleCreateCase = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!formData.title.trim()) {
-      alert('Case title is required');
+      alert('Case title is required.');
       return;
     }
 
-    setCreating(true);
+    setIsSubmitting(true);
     try {
-      const response = await fetch('/api/test/cases', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(formData)
-      });
-
-      if (response.ok) {
-        const result = await response.json();
-        alert('Case created successfully!');
-        setFormData({ title: '', description: '', clientName: '', caseType: 'General' });
-        setShowCreateForm(false);
-        loadCases(); // Refresh the list
-      } else {
-        const error = await response.json();
-        alert(`Error: ${error.error || 'Failed to create case'}`);
-      }
+      await apiService.createCase(formData);
+      alert('Case created successfully!');
+      onCaseCreated(); // Notify parent to refresh
     } catch (error) {
       console.error('Error creating case:', error);
-      alert('Error creating case');
+      alert(`Error: ${error.message}`);
     } finally {
-      setCreating(false);
+      setIsSubmitting(false);
     }
   };
 
-  const formatDate = (dateString) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric'
-    });
+  return (
+    <div className="card-glass create-case-form">
+      <h3>Create New Case</h3>
+      <form onSubmit={handleSubmit}>
+        <div className="form-grid">
+          <div className="form-group">
+            <label htmlFor="title">Case Title *</label>
+            <input
+              id="title"
+              type="text"
+              name="title"
+              value={formData.title}
+              onChange={handleInputChange}
+              placeholder="e.g., 'Johnson v. Smith Contract Dispute'"
+              required
+            />
+          </div>
+          <div className="form-group">
+            <label htmlFor="clientName">Client Name</label>
+            <input
+              id="clientName"
+              type="text"
+              name="clientName"
+              value={formData.clientName}
+              onChange={handleInputChange}
+              placeholder="e.g., 'John Doe'"
+            />
+          </div>
+          <div className="form-group">
+            <label htmlFor="caseType">Case Type</label>
+            <select
+              id="caseType"
+              name="caseType"
+              value={formData.caseType}
+              onChange={handleInputChange}
+            >
+              {caseTypes.map(type => (
+                <option key={type} value={type}>{type}</option>
+              ))}
+            </select>
+          </div>
+        </div>
+        <div className="form-group">
+          <label htmlFor="description">Description</label>
+          <textarea
+            id="description"
+            name="description"
+            value={formData.description}
+            onChange={handleInputChange}
+            placeholder="Provide a brief summary of the case..."
+            rows="4"
+          />
+        </div>
+        <div className="form-actions">
+          <button type="button" onClick={onCancel} className="btn btn-secondary">
+            Cancel
+          </button>
+          <button type="submit" disabled={isSubmitting} className="btn btn-primary">
+            {isSubmitting ? 'Creating...' : 'Create Case'}
+          </button>
+        </div>
+      </form>
+    </div>
+  );
+};
+
+// --- Single Case Card Component ---
+const CaseCard = ({ caseItem }) => {
+  const formatDate = (dateString) => new Date(dateString).toLocaleDateString('en-US', {
+    year: 'numeric', month: 'short', day: 'numeric'
+  });
+
+  const handleViewDocuments = () => {
+    window.location.href = `/documents?case=${caseItem._id}`;
   };
 
   return (
-    <div className="cases">
+    <div className="card-glass case-card">
+      <div className="case-card-header">
+        <h4>{caseItem.title}</h4>
+        <span className={`case-status status-${caseItem.status.toLowerCase().replace(' ', '-')}`}>
+          {caseItem.status}
+        </span>
+      </div>
+      <div className="case-card-body">
+        <p><strong>Client:</strong> {caseItem.clientName || 'N/A'}</p>
+        <p><strong>Type:</strong> {caseItem.caseType}</p>
+        <p><strong>Created:</strong> {formatDate(caseItem.createdAt)}</p>
+        {caseItem.description && (
+          <p className="case-description"><strong>Description:</strong> {caseItem.description}</p>
+        )}
+      </div>
+      <div className="case-card-footer">
+        <button onClick={handleViewDocuments} className="btn btn-secondary">
+          View Documents
+        </button>
+      </div>
+    </div>
+  );
+};
+
+// --- List of Cases Component ---
+const CaseList = ({ cases }) => {
+  if (cases.length === 0) {
+    return (
+      <div className="no-cases card-glass">
+        <FaFolderOpen className="no-cases-icon" />
+        <h3>No Cases Found</h3>
+        <p>Create your first case to get started!</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="cases-grid">
+      {cases.map(caseItem => (
+        <CaseCard key={caseItem._id} caseItem={caseItem} />
+      ))}
+    </div>
+  );
+};
+
+// --- Main Parent Component ---
+function Cases() {
+  const [cases, setCases] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [showCreateForm, setShowCreateForm] = useState(false);
+
+  const loadCases = useCallback(async () => {
+    setIsLoading(true);
+    const fetchedCases = await apiService.getCases();
+    setCases(fetchedCases);
+    setIsLoading(false);
+  }, []);
+
+  useEffect(() => {
+    loadCases();
+  }, [loadCases]);
+
+  const handleCaseCreated = () => {
+    setShowCreateForm(false);
+    loadCases(); // Refresh the list
+  };
+
+  return (
+    <div className="cases-page">
       <div className="cases-header">
-        <h2>📂 Case Management</h2>
-        <button 
-          onClick={() => setShowCreateForm(!showCreateForm)}
-          className="btn-create-case"
-        >
-          ➕ Create New Case
+        <h1>Case Management</h1>
+        <button onClick={() => setShowCreateForm(!showCreateForm)} className="btn btn-primary">
+          <FaPlus /> {showCreateForm ? 'Cancel' : 'Create New Case'}
         </button>
       </div>
 
       {showCreateForm && (
-        <div className="create-case-form">
-          <h3>Create New Case</h3>
-          <form onSubmit={handleCreateCase}>
-            <div className="form-group">
-              <label>Case Title *</label>
-              <input
-                type="text"
-                name="title"
-                value={formData.title}
-                onChange={handleInputChange}
-                placeholder="Enter case title"
-                required
-              />
-            </div>
-
-            <div className="form-group">
-              <label>Client Name</label>
-              <input
-                type="text"
-                name="clientName"
-                value={formData.clientName}
-                onChange={handleInputChange}
-                placeholder="Enter client name"
-              />
-            </div>
-
-            <div className="form-group">
-              <label>Case Type</label>
-              <select
-                name="caseType"
-                value={formData.caseType}
-                onChange={handleInputChange}
-              >
-                {caseTypes.map(type => (
-                  <option key={type} value={type}>{type}</option>
-                ))}
-              </select>
-            </div>
-
-            <div className="form-group">
-              <label>Description</label>
-              <textarea
-                name="description"
-                value={formData.description}
-                onChange={handleInputChange}
-                placeholder="Enter case description"
-                rows="3"
-              />
-            </div>
-
-            <div className="form-actions">
-              <button 
-                type="submit" 
-                disabled={creating}
-                className="btn-submit"
-              >
-                {creating ? 'Creating...' : 'Create Case'}
-              </button>
-              <button 
-                type="button"
-                onClick={() => setShowCreateForm(false)}
-                className="btn-cancel"
-              >
-                Cancel
-              </button>
-            </div>
-          </form>
-        </div>
+        <CaseForm onCaseCreated={handleCaseCreated} onCancel={() => setShowCreateForm(false)} />
       )}
 
       <div className="cases-list">
-        <h3>Your Cases ({cases.length})</h3>
-        
-        {cases.length === 0 ? (
-          <div className="no-cases">
-            <p>No cases found. Create your first case to get started!</p>
-          </div>
-        ) : (
-          <div className="cases-grid">
-            {cases.map(caseItem => (
-              <div key={caseItem._id} className="case-card">
-                <div className="case-header">
-                  <h4>{caseItem.title}</h4>
-                  <span className={`case-status status-${caseItem.status}`}>
-                    {caseItem.status}
-                  </span>
-                </div>
-                
-                <div className="case-details">
-                  <p><strong>Client:</strong> {caseItem.clientName}</p>
-                  <p><strong>Type:</strong> {caseItem.caseType}</p>
-                  <p><strong>Created:</strong> {formatDate(caseItem.createdAt)}</p>
-                  {caseItem.description && (
-                    <p><strong>Description:</strong> {caseItem.description}</p>
-                  )}
-                </div>
-
-                <div className="case-actions">
-                  <button 
-                    onClick={() => window.location.href = `/documents?case=${caseItem._id}`}
-                    className="btn-view-documents"
-                  >
-                    📄 View Documents
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
+        <h2>Your Cases ({cases.length})</h2>
+        {isLoading ? <p>Loading cases...</p> : <CaseList cases={cases} />}
       </div>
     </div>
   );
